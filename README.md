@@ -1,13 +1,15 @@
 # react-timetable-events
 
-> React Timetable Events Component
-
 [![NPM](https://img.shields.io/npm/v/react-timetable-events.svg)](https://www.npmjs.com/package/react-timetable-events) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+## Description [(Demo)](https://nikolasp.github.io/react-timetable-events/)
+
+> React Timetable Events Component
 
 ## Install
 
 ```bash
-npm install --save react-timetable-events
+yarn add react-timetable-events
 ```
 
 ## Usage
