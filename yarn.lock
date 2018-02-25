@@ -5520,6 +5520,12 @@ react-scripts@^1.0.17:
   optionalDependencies:
     fsevents "1.1.2"
 
+react-timetable-events@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-timetable-events/-/react-timetable-events-1.0.0.tgz#c6aa1c5e72782508da1154a0fd082359b982a714"
+  dependencies:
+    lodash "^4.17.5"
+
 react@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.2.0.tgz#a31bd2dab89bff65d42134fa187f24d054c273ba"

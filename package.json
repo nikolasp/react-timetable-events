@@ -1,6 +1,6 @@
 {
   "name": "react-timetable-events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Timetable events React component",
   "author": "Spalevic Nikola & Furtula Filip",
   "license": "MIT",
@@ -20,7 +20,8 @@
     "deploy": "gh-pages -d example/build"
   },
   "dependencies": {
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.5",
+    "react-timetable-events": "^1.0.0"
   },
   "peerDependencies": {
     "prop-types": "^15.5.4",
