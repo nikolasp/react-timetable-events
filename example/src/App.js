@@ -41,10 +41,40 @@ export default class App extends Component {
     }
   }
 
+  renderHour(hour, defaultAttributes, styles) {
+    return (
+      <div {...defaultAttributes}
+           key={hour}>
+        {hour}h
+      </div>
+    );
+  }
+
+  renderEvent(event, defaultAttributes, styles) {
+    return (
+      <div {...defaultAttributes}
+           title={event.name}
+           key={event.id}>
+        <span className={styles.event_info}>
+          [ { event.name } ]
+        </span>
+        <span className={styles.event_info}>
+          { event.startTime.format('HH:mm') } - { event.endTime.format('HH:mm') }
+        </span>
+      </div>
+    )
+  }
+
   render () {
     return (
       <div>
-        <TimeTable events={this.state.events} />
+        <TimeTable
+          events={this.state.events}
+          renderHour={this.renderHour}
+          renderEvent={this.renderEvent}
+          hoursInterval={[ 7, 24 ]}
+          timeLabel="Time :)"
+        />
       </div>
     )
   }

@@ -67,13 +67,29 @@ class TimeTable extends Component {
 
   renderDayEvents(day) {
     return (this.props.events[day] || []).map((event) =>
-              this.props.renderEvent.apply(this, [ event ]))
+      this.props.renderEvent.apply(
+        this,
+        [ event, {
+          className: `${styles.event} ${event.type}`,
+          style: this.getEventPositionStyles(event)
+        },
+        styles
+      ]))
   }
 
   renderHours() {
     return (
       range(...this.props.hoursInterval)
-        .map((hour) => this.props.renderHour.apply(this, [ `${hour}:00` ]))
+        .map((hour) => this.props.renderHour.apply(
+          this,
+          [
+            `${hour}:00`,
+             {
+                className: styles.hour,
+                style: { height: `${this.state.rowHeight}vh` }
+             },
+             styles
+          ]))
     )
   }
 
@@ -112,22 +128,22 @@ TimeTable.propTypes = {
 TimeTable.defaultProps = {
   hoursInterval: [ 7, 24 ],
   timeLabel: 'Time',
-  renderHour(hour) {
+  renderHour(hour, defaultAttributes) {
     return (
-      <div className={styles.hour}
-           style={{ height: `${this.state.rowHeight}vh` }}
+      <div {...defaultAttributes}
            key={hour}>
         { hour }
       </div>
     )
   },
-  renderEvent(event) {
+  renderEvent(event, defaultAttributes, styles) {
     return (
-      <div className={`${styles.event} ${event.type}`}
-           style={ this.getEventPositionStyles(event) }
+      <div {...defaultAttributes}
            title={event.name}
            key={event.id}>
-        <span className={styles.event_info}>{ event.name }</span>
+        <span className={styles.event_info}>
+          { event.name }
+        </span>
         <span className={styles.event_info}>
           { event.startTime.format('HH:mm') } - { event.endTime.format('HH:mm') }
         </span>

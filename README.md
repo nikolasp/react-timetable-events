@@ -46,19 +46,17 @@ TimeTable.propTypes = {
 TimeTable.defaultProps = {
   hoursInterval: [ 7, 24 ],
   timeLabel: 'Time',
-  renderHour(hour) {
+  renderHour(hour, defaultAttributes, styles) {
     return (
-      <div className={styles.hour}
-           style={{ height: `${this.state.rowHeight}vh` }}
+      <div {...defaultAttributes}
            key={hour}>
         { hour }
       </div>
     )
   },
-  renderEvent(event) {
+  renderEvent(event, defaultAttributes, styles) {
     return (
-      <div className={`${styles.event} ${event.type}`}
-           style={ this.getEventPositionStyles(event) }
+      <div {...defaultAttributes}
            title={event.name}
            key={event.id}>
         <span className={styles.event_info}>{ event.name }</span>
