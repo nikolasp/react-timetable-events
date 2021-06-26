@@ -4,7 +4,7 @@
 
 ## Description [(Demo)](https://nikolasp.github.io/react-timetable-events/)
 
-> React Timetable Events Component
+> React Timetable Events - flexible timetable component
 
 ## Install
 
@@ -14,18 +14,28 @@ yarn add react-timetable-events
 
 ## Usage
 
-```jsx
-import React, { Component } from 'react'
-
+```tsx
+import moment from "moment";
+import * as React from 'react'
 import Timetable from 'react-timetable-events'
 
-class Example extends Component {
-  render () {
-    return (
-      <Timetable events={this.state.events}/>
-    )
-  }
-}
+export const Example () => <Timetable 
+  events={{
+    monday: [
+      {
+        id: 1,
+        name: "Custom Event 1",
+        type: "custom",
+        startTime: moment("2018-02-23T11:30:00"),
+        endTime: moment("2018-02-23T13:30:00"),
+      },
+    ],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+  }}
+/>
 ```
 
 ## Available props
@@ -33,78 +43,92 @@ class Example extends Component {
 ```js
 TimeTable.propTypes = {
   events: PropTypes.object.isRequired, // events object prepared with days and list of events
-  hoursInterval: PropTypes.array, // array with min and max hours
-  renderEvent: PropTypes.func, // render event element in timetable
+  hoursInterval: PropTypes.shape({
+    from: PropTypes.number.isRequired,
+    to: PropTypes.number.isRequired,
+  }), // displayed hours
+  renderHour: PropTypes.func, // hour preview component
+  renderEvent: PropTypes.func, // event preview component
   getDayLabel: PropTypes.func, // change weekday label
-  timeLabel: PropTypes.string // Time label
-}
+  timeLabel: PropTypes.string, // Time label
+};
 ```
 
 ## Default props
 
 ```js
 TimeTable.defaultProps = {
-  hoursInterval: [ 7, 24 ],
-  timeLabel: 'Time',
+  hoursInterval: { from: 7, to: 24 },
+  timeLabel: "Time",
   renderHour(hour, defaultAttributes, styles) {
     return (
-      <div {...defaultAttributes}
-           key={hour}>
-        { hour }
+      <div {...defaultAttributes} key={hour}>
+        {hour}
       </div>
-    )
+    );
   },
   renderEvent(event, defaultAttributes, styles) {
     return (
-      <div {...defaultAttributes}
-           title={event.name}
-           key={event.id}>
-        <span className={styles.event_info}>{ event.name }</span>
+      <div {...defaultAttributes} title={event.name} key={event.id}>
+        <span className={styles.event_info}>{event.name}</span>
         <span className={styles.event_info}>
-          { event.startTime.format('HH:mm') } - { event.endTime.format('HH:mm') }
+          {event.startTime.format("HH:mm")} - {event.endTime.format("HH:mm")}
         </span>
       </div>
-    )
+    );
   },
-  getDayLabel: (day) => upperCase(day)
-}
+  getDayLabel: (day) => upperCase(day),
+};
 ```
 
-## Events prop format
+## Events - the only required prop
 
-```js
-  this.state = {
-    events: {
-      monday: [
-        {
-          id: 1,
-          name: 'Custom Event 1',
-          type: 'custom',
-          startTime: moment('2018-02-23T11:30:00'),
-          endTime: moment('2018-02-23T13:30:00')
-        }
-      ],
-      tuesday: [
-        {
-          id: 2,
-          name: 'Custom Event 2',
-          type: 'custom',
-          startTime: moment('2018-02-22T12:30:00'),
-          endTime: moment('2018-02-22T14:30:00')
-        },
-        {
-          id: 3,
-          name: 'Custom Event 3',
-          type: 'custom',
-          startTime: moment('2018-02-22T16:30:00'),
-          endTime: moment('2018-02-22T18:45:00')
-        }
-      ],
-      wednesday: [],
-      thursday: [],
-      friday: []
-    }
-  }
+```ts
+export interface Event {
+  id: number | string;
+  name: string;
+  startTime: Moment;
+  endTime: Moment;
+  type?: string;
+  [key: string]: unknown;
+}
+
+export interface Events {
+  [day: string]: Event[];
+}
+
+const events: Events = {
+  events: {
+    monday: [
+      {
+        id: 1,
+        name: "Custom Event 1",
+        type: "custom",
+        startTime: moment("2018-02-23T11:30:00"),
+        endTime: moment("2018-02-23T13:30:00"),
+      },
+    ],
+    tuesday: [
+      {
+        id: 2,
+        name: "Custom Event 2",
+        type: "custom",
+        startTime: moment("2018-02-22T12:30:00"),
+        endTime: moment("2018-02-22T14:30:00"),
+      },
+      {
+        id: 3,
+        name: "Custom Event 3",
+        type: "custom",
+        startTime: moment("2018-02-22T16:30:00"),
+        endTime: moment("2018-02-22T18:45:00"),
+      },
+    ],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+  },
+};
 ```
 
 ## License
