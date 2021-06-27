@@ -1,15 +1,9 @@
 {
-  "parser": "babel-eslint",
-  // "extends": [
-  //   "standard",
-  //   "standard-react"
-  // ],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "env": {
     "es6": true
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react"],
   "parserOptions": {
     "sourceType": "module",
     "allowImportExportEverywhere": true

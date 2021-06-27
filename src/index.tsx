@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 // @ts-expect-error
-import classNames from "./styles.css";
+import classNames from "./styles.module.css";
 export type ClassNames = {
   time_table_wrapper: string;
   day: string;
@@ -180,7 +180,7 @@ export const HoursList = ({
   );
 };
 
-interface TimeTableProps {
+export interface TimeTableProps {
   events: Events;
   hoursInterval?: typeof DEFAULT_HOURS_INTERVAL;
   timeLabel?: string;

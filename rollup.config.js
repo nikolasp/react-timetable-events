@@ -18,7 +18,7 @@ export default {
       format: "es",
     },
   ],
-  format: 'iife',
+  format: "iife",
   plugins: [
     babel({
       exclude: "node_modules/**",
@@ -27,11 +27,11 @@ export default {
     external(),
     commonjs(),
     typescript({
-      tsconfig: './tsconfig.json'
+      exclude: /.*\/stories\/.*\.(ts|tsx)/,
+      tsconfig: "./tsconfig.json",
     }),
     postcss({
       modules: true,
     }),
-    
   ],
 };
