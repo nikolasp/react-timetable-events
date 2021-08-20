@@ -2,9 +2,22 @@ import range from "lodash/range";
 import round from "lodash/round";
 import upperCase from "lodash/upperCase";
 import PropTypes from "prop-types";
-import React from "react";
-import { setHours, setMinutes, differenceInMinutes, format } from 'date-fns'
-import type { EventPreviewProps, Event, Events, HourPreviewProps, TimeTableProps, EventsList } from './types'
+import * as React from "react";
+import { 
+  setHours, 
+  setMinutes, 
+  differenceInMinutes, 
+  format 
+} from 'date-fns'
+import type { 
+  EventPreview, 
+  DayColumnPreview,
+  Event, 
+  HoursList,
+  HourPreview, 
+  TimeTable, 
+  EventsList 
+} from './types'
 // @ts-expect-error
 import classNames from "./styles.module.css";
 import { DEFAULT_HOURS_INTERVAL } from "./constants";
@@ -33,20 +46,22 @@ const getEventPositionStyles = ({
   );
   
   let minutes = round(differenceInMinutes(event.endTime, event.startTime));
+  console.log(minutes)
+  console.log(minutesFromStartOfDay)
   return {
     height: (minutes * rowHeight) / 60 + "vh",
     marginTop: (minutesFromStartOfDay * rowHeight) / 60 + "vh",
   };
 };
 
-export const HourPreview: React.FC<HourPreviewProps> = ({ hour, defaultAttributes }) => (
+export const HourPreviewJSX: React.FC<HourPreview> = ({ hour, defaultAttributes }) => (
   <div {...defaultAttributes} key={hour}>
     {hour}
   </div>
 );
 
 
-export const EventPreview: React.FC<EventPreviewProps> = ({
+export const EventPreviewJSX: React.FC<EventPreview> = ({
   event,
   defaultAttributes,
   classNames,
@@ -80,7 +95,7 @@ export const EventsListJSX = ({
   );
 };
 
-const DayColumnPreview = ({
+const DayColumnPreviewJSX = ({
   events,
   day,
   index,
@@ -88,15 +103,7 @@ const DayColumnPreview = ({
   getDayLabel,
   renderEvent,
   hoursInterval,
-}: {
-  events: Events;
-  day: string;
-  index: number;
-  rowHeight: number;
-  getDayLabel: (day: string) => string;
-  renderEvent: typeof EventPreview;
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-}) => (
+}: DayColumnPreview) => (
   <div
     className={`${classNames.day} ${day}`}
     style={{
@@ -118,15 +125,11 @@ const DayColumnPreview = ({
   </div>
 );
 
-export const HoursList = ({
+export const HoursListJSX = ({
   hoursInterval,
   rowHeight,
   renderHour,
-}: {
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-  rowHeight: number;
-  renderHour: typeof HourPreview;
-}) => {
+}: HoursList) => {
   return range(hoursInterval.from, hoursInterval.to).map((hour) =>
     renderHour({
       hour: `${hour}:00`,
@@ -140,14 +143,14 @@ export const HoursList = ({
 };
 
 
-export const TimeTable = ({
+export const TimeTableJSX = ({
   events,
   hoursInterval = DEFAULT_HOURS_INTERVAL,
   timeLabel = "Time",
   getDayLabel = getDefaultDayLabel,
-  renderEvent = EventPreview,
-  renderHour = HourPreview,
-}: TimeTableProps) => {
+  renderEvent = EventPreviewJSX,
+  renderHour = HourPreviewJSX,
+}: TimeTable) => {
   const [rowHeight, setRowHeight] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -163,11 +166,11 @@ export const TimeTable = ({
         >
           {timeLabel}
         </div>
-        {HoursList({ hoursInterval, renderHour, rowHeight })}
+        {HoursListJSX({ hoursInterval, renderHour, rowHeight })}
       </div>
 
       {Object.keys(events).map((day, index) =>
-        DayColumnPreview({
+        DayColumnPreviewJSX({
           events,
           day,
           index,
@@ -181,7 +184,7 @@ export const TimeTable = ({
   );
 };
 
-TimeTable.propTypes = {
+TimeTableJSX.propTypes = {
   events: PropTypes.object.isRequired,
   hoursInterval: PropTypes.shape({
     from: PropTypes.number.isRequired,
@@ -193,11 +196,11 @@ TimeTable.propTypes = {
   timeLabel: PropTypes.string,
 };
 
-TimeTable.defaultProps = {
+TimeTableJSX.defaultProps = {
   hoursInterval: DEFAULT_HOURS_INTERVAL,
   timeLabel: "Time",
-  renderHour: HourPreview,
-  renderEvent: EventPreview,
+  renderHour: HourPreviewJSX,
+  renderEvent: EventPreviewJSX,
   getDayLabel: getDefaultDayLabel,
 };
 

@@ -1,11 +1,12 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import React from "react";
-import { EventPreviewProps, HourPreviewProps, TimeTable } from "./../index";
+import { EventPreview, HourPreview } from "./../types";
 import { format } from 'date-fns'
+import { TimeTableJSX } from "..";
 
 export default {
   title: "Example/TimeTable",
-  component: TimeTable,
+  component: TimeTableJSX,
   argTypes: {
     events: {
       monday: [
@@ -38,10 +39,10 @@ export default {
       friday: [],
     },
   },
-} as ComponentMeta<typeof TimeTable>;
+} as ComponentMeta<typeof TimeTableJSX>;
 
-const Template: ComponentStory<typeof TimeTable> = (args: any) => (
-  <TimeTable {...args} />
+const Template: ComponentStory<typeof TimeTableJSX> = (args: any) => (
+  <TimeTableJSX {...args} />
 );
 
 export const Primary = Template.bind({});
@@ -78,10 +79,10 @@ Primary.args = {
   },
   hoursInterval: { from: 7, to: 24 },
   timeLabel: "Time",
-  getDayLabel: (day) => day.slice(0, 3),
+  getDayLabel: (day: string) => day.slice(0, 3),
 };
 
-const HourPreview = ({ hour, defaultAttributes }: HourPreviewProps) => {
+const HourPreviewJSX = ({ hour, defaultAttributes }: HourPreview) => {
   return (
     <div {...defaultAttributes} key={hour}>
       {hour}
@@ -89,11 +90,11 @@ const HourPreview = ({ hour, defaultAttributes }: HourPreviewProps) => {
   );
 };
 
-const EventPreview = ({
+const EventPreviewJSX = ({
   event,
   defaultAttributes,
   classNames,
-}: EventPreviewProps) => {
+}: EventPreview) => {
   return (
     <div
       {...defaultAttributes}
@@ -117,6 +118,6 @@ export const Secondary = Template.bind({});
 Secondary.storyName = 'Customized: `renderEvent` and `renderHour`'
 Secondary.args = {
   ...Primary.args,
-  renderEvent: EventPreview,
-  renderHour: HourPreview,
+  renderEvent: EventPreviewJSX,
+  renderHour: HourPreviewJSX,
 };
