@@ -1,11 +1,12 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import moment from "moment";
 import React from "react";
-import { EventPreviewProps, HourPreviewProps, TimeTable } from "./../index";
+import { EventPreview, HourPreview } from "./../types";
+import { format } from 'date-fns'
+import { TimeTableJSX } from "..";
 
 export default {
   title: "Example/TimeTable",
-  component: TimeTable,
+  component: TimeTableJSX,
   argTypes: {
     events: {
       monday: [
@@ -13,8 +14,8 @@ export default {
           id: 1,
           name: "Custom Event 1",
           type: "error",
-          startTime: moment("2018-02-23T11:30:00"),
-          endTime: moment("2018-02-23T13:30:00"),
+          startTime: new Date("2018-02-23T11:30:00"),
+          endTime: new Date("2018-02-23T13:30:00")
         },
       ],
       tuesday: [
@@ -22,15 +23,15 @@ export default {
           id: 2,
           name: "Custom Event 2",
           type: "custom",
-          startTime: moment("2018-02-22T12:30:00"),
-          endTime: moment("2018-02-22T14:30:00"),
+          startTime: new Date("2018-02-22T12:30:00"),
+          endTime: new Date("2018-02-22T14:30:00")
         },
         {
           id: 3,
           name: "Custom Event 3",
           type: "custom",
-          startTime: moment("2018-02-22T16:30:00"),
-          endTime: moment("2018-02-22T18:45:00"),
+          startTime: new Date("2018-02-22T16:30:00"),
+          endTime: new Date("2018-02-22T18:45:00")
         },
       ],
       wednesday: [],
@@ -38,10 +39,10 @@ export default {
       friday: [],
     },
   },
-} as ComponentMeta<typeof TimeTable>;
+} as ComponentMeta<typeof TimeTableJSX>;
 
-const Template: ComponentStory<typeof TimeTable> = (args) => (
-  <TimeTable {...args} />
+const Template: ComponentStory<typeof TimeTableJSX> = (args: any) => (
+  <TimeTableJSX {...args} />
 );
 
 export const Primary = Template.bind({});
@@ -52,8 +53,8 @@ Primary.args = {
         id: 1,
         name: "Custom Event 1",
         type: "error",
-        startTime: moment("2018-02-23T11:30:00"),
-        endTime: moment("2018-02-23T13:30:00"),
+        startTime: new Date("2018-02-23T11:30:00"),
+        endTime: new Date("2018-02-23T13:30:00")
       },
     ],
     tuesday: [
@@ -61,15 +62,15 @@ Primary.args = {
         id: 2,
         name: "Custom Event 2",
         type: "custom",
-        startTime: moment("2018-02-22T12:30:00"),
-        endTime: moment("2018-02-22T14:30:00"),
+        startTime: new Date("2018-02-22T12:30:00"),
+        endTime: new Date("2018-02-22T14:30:00")
       },
       {
         id: 3,
         name: "Custom Event 3",
         type: "custom",
-        startTime: moment("2018-02-22T16:30:00"),
-        endTime: moment("2018-02-22T18:45:00"),
+        startTime: new Date("2018-02-22T16:30:00"),
+        endTime: new Date("2018-02-22T18:45:00")
       },
     ],
     wednesday: [],
@@ -78,22 +79,22 @@ Primary.args = {
   },
   hoursInterval: { from: 7, to: 24 },
   timeLabel: "Time",
-  getDayLabel: (day) => day.slice(0, 3),
+  getDayLabel: (day: string) => day.slice(0, 3),
 };
 
-const HourPreview = ({ hour, defaultAttributes }: HourPreviewProps) => {
+const HourPreviewJSX = ({ hour, defaultAttributes }: HourPreview) => {
   return (
     <div {...defaultAttributes} key={hour}>
-      {hour}h
+      {hour}
     </div>
   );
 };
 
-const EventPreview = ({
+const EventPreviewJSX = ({
   event,
   defaultAttributes,
   classNames,
-}: EventPreviewProps) => {
+}: EventPreview) => {
   return (
     <div
       {...defaultAttributes}
@@ -107,7 +108,7 @@ const EventPreview = ({
     >
       <span className={classNames.event_info}>[ {event.name} ]</span>
       <span className={classNames.event_info}>
-        {event.startTime.format("HH:mm")} - {event.endTime.format("HH:mm")}
+        {format(event.startTime, "HH:mm")} - {format(event.endTime, "HH:mm")}
       </span>
     </div>
   );
@@ -117,6 +118,6 @@ export const Secondary = Template.bind({});
 Secondary.storyName = 'Customized: `renderEvent` and `renderHour`'
 Secondary.args = {
   ...Primary.args,
-  renderEvent: EventPreview,
-  renderHour: HourPreview,
+  renderEvent: EventPreviewJSX,
+  renderHour: HourPreviewJSX,
 };
