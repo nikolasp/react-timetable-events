@@ -204,4 +204,4 @@ TimeTableJSX.defaultProps = {
   getDayLabel: getDefaultDayLabel,
 };
 
-export default TimeTable;
+export default TimeTableJSX;
