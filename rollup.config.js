@@ -1,7 +1,7 @@
+import babel from "@rollup/plugin-babel";
+import commonjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import babel from "rollup-plugin-babel";
-import commonjs from "rollup-plugin-commonjs";
-import resolve from "rollup-plugin-node-resolve";
 import external from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import pkg from "./package.json";
@@ -12,16 +12,18 @@ export default {
     {
       file: pkg.main,
       format: "cjs",
+      exports: "named",
     },
     {
       file: pkg.module,
       format: "es",
+      exports: "named",
     },
   ],
-  format: "iife",
   plugins: [
     babel({
       exclude: "node_modules/**",
+      babelHelpers: "bundled",
     }),
     resolve(),
     external(),

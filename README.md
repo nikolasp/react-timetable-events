@@ -15,7 +15,6 @@ yarn add react-timetable-events
 ## Usage
 
 ```tsx
-import moment from "moment";
 import * as React from 'react'
 import Timetable from 'react-timetable-events'
 
@@ -26,8 +25,8 @@ export const Example () => <Timetable
         id: 1,
         name: "Custom Event 1",
         type: "custom",
-        startTime: moment("2018-02-23T11:30:00"),
-        endTime: moment("2018-02-23T13:30:00"),
+        startTime: new Date("2018-02-23T11:30:00"),
+        endTime: new Date("2018-02-23T13:30:00"),
       },
     ],
     tuesday: [],
@@ -87,8 +86,8 @@ TimeTable.defaultProps = {
 export interface Event {
   id: number | string;
   name: string;
-  startTime: Moment;
-  endTime: Moment;
+  startTime: Date;
+  endTime: Date;
   type?: string;
   [key: string]: unknown;
 }
@@ -104,8 +103,8 @@ const events: Events = {
         id: 1,
         name: "Custom Event 1",
         type: "custom",
-        startTime: moment("2018-02-23T11:30:00"),
-        endTime: moment("2018-02-23T13:30:00"),
+        startTime: new Date("2018-02-23T11:30:00"),
+        endTime: new Date("2018-02-23T13:30:00"),
       },
     ],
     tuesday: [
@@ -113,15 +112,15 @@ const events: Events = {
         id: 2,
         name: "Custom Event 2",
         type: "custom",
-        startTime: moment("2018-02-22T12:30:00"),
-        endTime: moment("2018-02-22T14:30:00"),
+        startTime: new Date("2018-02-22T12:30:00"),
+        endTime: new Date("2018-02-22T14:30:00"),
       },
       {
         id: 3,
         name: "Custom Event 3",
         type: "custom",
-        startTime: moment("2018-02-22T16:30:00"),
-        endTime: moment("2018-02-22T18:45:00"),
+        startTime: new Date("2018-02-22T16:30:00"),
+        endTime: new Date("2018-02-22T18:45:00"),
       },
     ],
     wednesday: [],

@@ -1,35 +1,19 @@
+import differenceInMinutes from 'date-fns/differenceInMinutes';
+import format from 'date-fns/format';
+import setHours from 'date-fns/setHours';
+import setMinutes from 'date-fns/setMinutes';
 import range from "lodash/range";
 import round from "lodash/round";
 import upperCase from "lodash/upperCase";
-import { Moment } from "moment";
 import PropTypes from "prop-types";
 import * as React from "react";
-
-// @ts-expect-error
+import { DEFAULT_HOURS_INTERVAL } from "./constants";
+// @ts-expect-error Cannot find module './styles.module.css' or its corresponding type declarations.
 import classNames from "./styles.module.css";
-export type ClassNames = {
-  time_table_wrapper: string;
-  day: string;
-  day_title: string;
-  hour: string;
-  event: string;
-  event_info: string;
-};
-
-export interface Event {
-  id: number | string;
-  name: string;
-  startTime: Moment;
-  endTime: Moment;
-  type?: string;
-  [key: string]: unknown;
-}
-
-export interface Events {
-  [day: string]: Event[];
-}
-
-const DEFAULT_HOURS_INTERVAL = { from: 7, to: 24 };
+import type {
+  DayColumnPreviewProps,
+  Event, EventPreviewProps, EventsListProps, HourPreviewProps, HoursListProps, TimeTableProps
+} from './types';
 
 const getRowHeight = (from: number, to: number) => {
   const numberOfRows = to - from + 1;
@@ -48,49 +32,36 @@ const getEventPositionStyles = ({
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
   rowHeight: number;
 }) => {
-  let startOfDay = event.startTime
-    .clone()
-    .set("hour", hoursInterval.from)
-    .set("minutes", 0);
+  let startOfDay = setMinutes(setHours(event.startTime, hoursInterval.from), 0)
 
   let minutesFromStartOfDay = round(
-    event.startTime.diff(startOfDay) / 1000 / 60
+    differenceInMinutes(event.startTime, startOfDay)
   );
-  let minutes = round(event.endTime.diff(event.startTime) / 1000 / 60);
+  
+  let minutes = round(differenceInMinutes(event.endTime, event.startTime));
   return {
     height: (minutes * rowHeight) / 60 + "vh",
     marginTop: (minutesFromStartOfDay * rowHeight) / 60 + "vh",
   };
 };
 
-export interface HourPreviewProps {
-  hour: string;
-  defaultAttributes: React.HTMLAttributes<HTMLDivElement>;
-  classNames?: ClassNames;
-}
 
-export const HourPreview = ({ hour, defaultAttributes }: HourPreviewProps) => (
+export const HourPreview: React.FC<HourPreviewProps> = ({ hour, defaultAttributes }) => (
   <div {...defaultAttributes} key={hour}>
     {hour}
   </div>
 );
 
-export interface EventPreviewProps {
-  event: Event;
-  defaultAttributes: React.HTMLAttributes<HTMLDivElement>;
-  classNames: ClassNames;
-}
-
-export const EventPreview = ({
+export const EventPreview: React.FC<EventPreviewProps> = ({
   event,
   defaultAttributes,
   classNames,
-}: EventPreviewProps) => {
+}) => {
   return (
     <div {...defaultAttributes} title={event.name} key={event.id}>
       <span className={classNames.event_info}>{event.name}</span>
       <span className={classNames.event_info}>
-        {event.startTime.format("HH:mm")} - {event.endTime.format("HH:mm")}
+        {format(event.startTime, "HH:mm")} - {format(event.endTime, "HH:mm")}
       </span>
     </div>
   );
@@ -102,13 +73,7 @@ export const EventsList = ({
   hoursInterval,
   rowHeight,
   renderEvent,
-}: {
-  day: string;
-  events: Events;
-  renderEvent: typeof EventPreview;
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-  rowHeight: number;
-}) => {
+}: EventsListProps) => {
   return (events[day] || []).map((event) =>
     renderEvent({
       event,
@@ -129,15 +94,7 @@ const DayColumnPreview = ({
   getDayLabel,
   renderEvent,
   hoursInterval,
-}: {
-  events: Events;
-  day: string;
-  index: number;
-  rowHeight: number;
-  getDayLabel: (day: string) => string;
-  renderEvent: typeof EventPreview;
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-}) => (
+}: DayColumnPreviewProps) => (
   <div
     className={`${classNames.day} ${day}`}
     style={{
@@ -159,15 +116,12 @@ const DayColumnPreview = ({
   </div>
 );
 
+
 export const HoursList = ({
   hoursInterval,
   rowHeight,
   renderHour,
-}: {
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-  rowHeight: number;
-  renderHour: typeof HourPreview;
-}) => {
+}: HoursListProps) => {
   return range(hoursInterval.from, hoursInterval.to).map((hour) =>
     renderHour({
       hour: `${hour}:00`,
@@ -180,14 +134,6 @@ export const HoursList = ({
   );
 };
 
-export interface TimeTableProps {
-  events: Events;
-  hoursInterval?: typeof DEFAULT_HOURS_INTERVAL;
-  timeLabel?: string;
-  getDayLabel?: (day: string) => string;
-  renderEvent?: typeof EventPreview;
-  renderHour?: typeof HourPreview;
-}
 
 export const TimeTable = ({
   events,
