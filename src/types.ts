@@ -66,4 +66,5 @@ export interface TimeTableProps {
   getDayLabel?: (day: string) => string;
   renderEvent?: React.FC<EventPreviewProps>;
   renderHour?: React.FC<HourPreviewProps>;
+  style: React.CSSProperties;
 }

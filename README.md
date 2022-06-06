@@ -34,6 +34,7 @@ export const Example () => <Timetable
     thursday: [],
     friday: [],
   }}
+  style={{ height: '500px' }}
 />
 ```
 
@@ -50,6 +51,7 @@ TimeTable.propTypes = {
   renderEvent: PropTypes.func, // event preview component
   getDayLabel: PropTypes.func, // change weekday label
   timeLabel: PropTypes.string, // Time label
+  style: React.CSSProperties, // pass custom wrapper styles like height and width
 };
 ```
 
@@ -59,19 +61,19 @@ TimeTable.propTypes = {
 TimeTable.defaultProps = {
   hoursInterval: { from: 7, to: 24 },
   timeLabel: "Time",
-  renderHour(hour, defaultAttributes, styles) {
+  renderHour({hour, defaultAttributes, styles}) {
     return (
       <div {...defaultAttributes} key={hour}>
         {hour}
       </div>
     );
   },
-  renderEvent(event, defaultAttributes, styles) {
+  renderEvent({event, defaultAttributes, styles}) {
     return (
       <div {...defaultAttributes} title={event.name} key={event.id}>
         <span className={styles.event_info}>{event.name}</span>
         <span className={styles.event_info}>
-          {event.startTime.format("HH:mm")} - {event.endTime.format("HH:mm")}
+          {event.startTime} - {event.endTime}
         </span>
       </div>
     );

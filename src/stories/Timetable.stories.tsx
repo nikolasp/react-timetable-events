@@ -42,7 +42,7 @@ export default {
 } as ComponentMeta<typeof TimeTable>;
 
 const Template: ComponentStory<typeof TimeTable> = (args) => (
-  <TimeTable {...args} />
+  <TimeTable {...args} style={{ height: "500px" }} />
 );
 
 export const Primary = Template.bind({});

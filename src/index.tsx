@@ -1,7 +1,7 @@
-import differenceInMinutes from 'date-fns/differenceInMinutes';
-import format from 'date-fns/format';
-import setHours from 'date-fns/setHours';
-import setMinutes from 'date-fns/setMinutes';
+import differenceInMinutes from "date-fns/differenceInMinutes";
+import format from "date-fns/format";
+import setHours from "date-fns/setHours";
+import setMinutes from "date-fns/setMinutes";
 import range from "lodash/range";
 import round from "lodash/round";
 import upperCase from "lodash/upperCase";
@@ -12,13 +12,18 @@ import { DEFAULT_HOURS_INTERVAL } from "./constants";
 import classNames from "./styles.module.css";
 import type {
   DayColumnPreviewProps,
-  Event, EventPreviewProps, EventsListProps, HourPreviewProps, HoursListProps, TimeTableProps
-} from './types';
+  Event,
+  EventPreviewProps,
+  EventsListProps,
+  HourPreviewProps,
+  HoursListProps,
+  TimeTableProps,
+} from "./types";
 
-const getRowHeight = (from: number, to: number) => {
+const getRowHeight = (from: number, to: number, totalHeight: number) => {
   const numberOfRows = to - from + 1;
 
-  return round(100 / numberOfRows, 5);
+  return round(totalHeight / numberOfRows, 5);
 };
 
 export const getDefaultDayLabel = (day: string) => upperCase(day);
@@ -32,21 +37,23 @@ const getEventPositionStyles = ({
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
   rowHeight: number;
 }) => {
-  let startOfDay = setMinutes(setHours(event.startTime, hoursInterval.from), 0)
+  let startOfDay = setMinutes(setHours(event.startTime, hoursInterval.from), 0);
 
   let minutesFromStartOfDay = round(
     differenceInMinutes(event.startTime, startOfDay)
   );
-  
+
   let minutes = round(differenceInMinutes(event.endTime, event.startTime));
   return {
-    height: (minutes * rowHeight) / 60 + "vh",
-    marginTop: (minutesFromStartOfDay * rowHeight) / 60 + "vh",
+    height: (minutes * rowHeight) / 60 + "px",
+    marginTop: (minutesFromStartOfDay * rowHeight) / 60 + rowHeight + "px",
   };
 };
 
-
-export const HourPreview: React.FC<HourPreviewProps> = ({ hour, defaultAttributes }) => (
+export const HourPreview: React.FC<HourPreviewProps> = ({
+  hour,
+  defaultAttributes,
+}) => (
   <div {...defaultAttributes} key={hour}>
     {hour}
   </div>
@@ -98,12 +105,12 @@ const DayColumnPreview = ({
   <div
     className={`${classNames.day} ${day}`}
     style={{
-      backgroundSize: `1px ${2 * rowHeight}vh`,
-      width: `calc((100% - 5rem) / ${Object.keys(events).length})`,
+      backgroundSize: `1px ${2 * rowHeight}px`,
+      width: `calc((100% - 5rem) / ${Object.keys(events).length})`
     }}
     key={`${day}-${index}`}
   >
-    <div className={classNames.day_title} style={{ height: `${rowHeight}vh` }}>
+    <div className={classNames.day_title} style={{ height: `${rowHeight}px` }}>
       {getDayLabel(day)}
     </div>
     {EventsList({
@@ -116,7 +123,6 @@ const DayColumnPreview = ({
   </div>
 );
 
-
 export const HoursList = ({
   hoursInterval,
   rowHeight,
@@ -127,13 +133,12 @@ export const HoursList = ({
       hour: `${hour}:00`,
       defaultAttributes: {
         className: classNames.hour,
-        style: { height: `${rowHeight}vh` },
+        style: { height: `${rowHeight}px` },
       },
       classNames,
     })
   );
 };
-
 
 export const TimeTable = ({
   events,
@@ -142,19 +147,40 @@ export const TimeTable = ({
   getDayLabel = getDefaultDayLabel,
   renderEvent = EventPreview,
   renderHour = HourPreview,
+  style = {},
 }: TimeTableProps) => {
+  const [dimensions, setDimensions] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const [rowHeight, setRowHeight] = React.useState<number>(0);
+  const ref = React.useRef(null);
+  const handleResize = () => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
 
   React.useEffect(() => {
-    setRowHeight(getRowHeight(hoursInterval.from, hoursInterval.to));
-  }, [hoursInterval]);
+    window.addEventListener("resize", handleResize, false);
+  }, []);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      const totalHeight = (ref.current as HTMLDivElement).clientHeight;
+      setRowHeight(
+        getRowHeight(hoursInterval.from, hoursInterval.to, totalHeight)
+      );
+    }
+  }, [hoursInterval, dimensions]);
 
   return (
-    <div className={classNames.time_table_wrapper}>
+    <div className={classNames.time_table_wrapper} style={style} ref={ref}>
       <div className={classNames.day}>
         <div
           className={classNames.day_title}
-          style={{ height: `${rowHeight}vh` }}
+          style={{ height: `${rowHeight}px` }}
         >
           {timeLabel}
         </div>
