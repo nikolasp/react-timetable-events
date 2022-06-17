@@ -4,12 +4,16 @@
 
 ## Description [(Demo)](https://nikolasp.github.io/react-timetable-events/)
 
-> React Timetable Events - flexible timetable component
+> React Timetable Events - flexible timetable component. Ideal for school timetables.
 
-## Install
+## Installation
 
 ```bash
+# with yarn
 yarn add react-timetable-events
+
+# with npm
+npm install react-timetable-events
 ```
 
 ## Usage
@@ -47,40 +51,18 @@ TimeTable.propTypes = {
     from: PropTypes.number.isRequired,
     to: PropTypes.number.isRequired,
   }), // displayed hours
+  renderDayHeader: PropTypes.func, // table header preview component
   renderHour: PropTypes.func, // hour preview component
   renderEvent: PropTypes.func, // event preview component
   getDayLabel: PropTypes.func, // change weekday label
   timeLabel: PropTypes.string, // Time label
   style: React.CSSProperties, // pass custom wrapper styles like height and width
+  headerAttributes: PropTypes.object, // table header attributes - HTML attrs can be passed
+  bodyAttributes: PropTypes.object, // table body attributes - HTML attrs can be passed
 };
 ```
 
-## Default props
-
-```js
-TimeTable.defaultProps = {
-  hoursInterval: { from: 7, to: 24 },
-  timeLabel: "Time",
-  renderHour({hour, defaultAttributes, styles}) {
-    return (
-      <div {...defaultAttributes} key={hour}>
-        {hour}
-      </div>
-    );
-  },
-  renderEvent({event, defaultAttributes, styles}) {
-    return (
-      <div {...defaultAttributes} title={event.name} key={event.id}>
-        <span className={styles.event_info}>{event.name}</span>
-        <span className={styles.event_info}>
-          {event.startTime} - {event.endTime}
-        </span>
-      </div>
-    );
-  },
-  getDayLabel: (day) => upperCase(day),
-};
-```
+Check [Storybook](./src/stories/Timetable.stories.tsx) for more details about customization.
 
 ## Events - the only required prop
 

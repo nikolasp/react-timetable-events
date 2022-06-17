@@ -1,10 +1,5 @@
-import differenceInMinutes from "date-fns/differenceInMinutes";
 import format from "date-fns/format";
-import setHours from "date-fns/setHours";
-import setMinutes from "date-fns/setMinutes";
 import range from "lodash/range";
-import round from "lodash/round";
-import upperCase from "lodash/upperCase";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { DEFAULT_HOURS_INTERVAL } from "./constants";
@@ -12,49 +7,39 @@ import { DEFAULT_HOURS_INTERVAL } from "./constants";
 import classNames from "./styles.module.css";
 import type {
   DayColumnPreviewProps,
-  Event,
+  DayHeaderPreviewProps,
   EventPreviewProps,
   EventsListProps,
   HourPreviewProps,
   HoursListProps,
   TimeTableProps,
 } from "./types";
+import {
+  getDefaultDayLabel,
+  getEventPositionStyles,
+  getRowHeight,
+} from "./utils";
 
-const getRowHeight = (from: number, to: number, totalHeight: number) => {
-  const numberOfRows = to - from + 1;
-
-  return round(totalHeight / numberOfRows, 5);
-};
-
-export const getDefaultDayLabel = (day: string) => upperCase(day);
-
-const getEventPositionStyles = ({
-  event,
-  hoursInterval,
+export const DayHeaderPreview: React.FC<DayHeaderPreviewProps> = ({
+  day,
   rowHeight,
-}: {
-  event: Event;
-  hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
-  rowHeight: number;
+  ...otherProperties
 }) => {
-  let startOfDay = setMinutes(setHours(event.startTime, hoursInterval.from), 0);
-
-  let minutesFromStartOfDay = round(
-    differenceInMinutes(event.startTime, startOfDay)
+  return (
+    <div
+      {...otherProperties}
+      style={{ ...(otherProperties?.style || {}), height: `${rowHeight}px` }}
+    >
+      {getDefaultDayLabel(day)}
+    </div>
   );
-
-  let minutes = round(differenceInMinutes(event.endTime, event.startTime));
-  return {
-    height: (minutes * rowHeight) / 60 + "px",
-    marginTop: (minutesFromStartOfDay * rowHeight) / 60 + rowHeight + "px",
-  };
 };
 
 export const HourPreview: React.FC<HourPreviewProps> = ({
   hour,
-  defaultAttributes,
+  ...otherProperties
 }) => (
-  <div {...defaultAttributes} key={hour}>
+  <div {...otherProperties} key={hour}>
     {hour}
   </div>
 );
@@ -98,30 +83,42 @@ const DayColumnPreview = ({
   day,
   index,
   rowHeight,
-  getDayLabel,
+  renderDayHeader,
   renderEvent,
   hoursInterval,
-}: DayColumnPreviewProps) => (
-  <div
-    className={`${classNames.day} ${day}`}
-    style={{
-      backgroundSize: `1px ${2 * rowHeight}px`,
-      width: `calc((100% - 5rem) / ${Object.keys(events).length})`
-    }}
-    key={`${day}-${index}`}
-  >
-    <div className={classNames.day_title} style={{ height: `${rowHeight}px` }}>
-      {getDayLabel(day)}
+  headerAttributes,
+  bodyAttributes,
+}: DayColumnPreviewProps) => {
+  return (
+    <div
+      {...bodyAttributes}
+      className={`${classNames.day} ${day} ${bodyAttributes?.className || ""}`}
+      style={{
+        ...(bodyAttributes?.style || {}),
+        backgroundSize: `1px ${2 * rowHeight}px`,
+        width: `calc((100% - 5rem) / ${Object.keys(events).length})`,
+      }}
+      key={`${day}-${index}`}
+    >
+      {renderDayHeader({
+        day,
+        rowHeight,
+        ...headerAttributes,
+        className: `${classNames.day_title} ${
+          headerAttributes?.className || ""
+        }`,
+      })}
+
+      {EventsList({
+        events,
+        day,
+        renderEvent,
+        hoursInterval,
+        rowHeight,
+      })}
     </div>
-    {EventsList({
-      events,
-      day,
-      renderEvent,
-      hoursInterval,
-      rowHeight,
-    })}
-  </div>
-);
+  );
+};
 
 export const HoursList = ({
   hoursInterval,
@@ -131,11 +128,8 @@ export const HoursList = ({
   return range(hoursInterval.from, hoursInterval.to).map((hour) =>
     renderHour({
       hour: `${hour}:00`,
-      defaultAttributes: {
-        className: classNames.hour,
-        style: { height: `${rowHeight}px` },
-      },
-      classNames,
+      className: classNames.hour,
+      style: { height: `${rowHeight}px` },
     })
   );
 };
@@ -144,10 +138,12 @@ export const TimeTable = ({
   events,
   hoursInterval = DEFAULT_HOURS_INTERVAL,
   timeLabel = "Time",
-  getDayLabel = getDefaultDayLabel,
+  renderDayHeader = DayHeaderPreview,
   renderEvent = EventPreview,
   renderHour = HourPreview,
-  style = {},
+  headerAttributes,
+  bodyAttributes,
+  ...otherProperties
 }: TimeTableProps) => {
   const [dimensions, setDimensions] = React.useState({
     width: window.innerWidth,
@@ -176,11 +172,21 @@ export const TimeTable = ({
   }, [hoursInterval, dimensions]);
 
   return (
-    <div className={classNames.time_table_wrapper} style={style} ref={ref}>
+    <div
+      {...otherProperties}
+      className={`${classNames.time_table_wrapper} ${otherProperties.className}`}
+      ref={ref}
+    >
       <div className={classNames.day}>
         <div
-          className={classNames.day_title}
-          style={{ height: `${rowHeight}px` }}
+          {...headerAttributes}
+          className={`${classNames.day_title} ${
+            headerAttributes?.className || ""
+          }`}
+          style={{
+            ...(headerAttributes?.style || {}),
+            height: `${rowHeight}px`,
+          }}
         >
           {timeLabel}
         </div>
@@ -193,9 +199,11 @@ export const TimeTable = ({
           day,
           index,
           rowHeight,
-          getDayLabel,
+          renderDayHeader,
           renderEvent,
           hoursInterval,
+          headerAttributes,
+          bodyAttributes,
         })
       )}
     </div>
@@ -208,18 +216,21 @@ TimeTable.propTypes = {
     from: PropTypes.number.isRequired,
     to: PropTypes.number.isRequired,
   }),
+  renderDayHeader: PropTypes.func,
   renderHour: PropTypes.func,
   renderEvent: PropTypes.func,
   getDayLabel: PropTypes.func,
   timeLabel: PropTypes.string,
+  headerAttributes: PropTypes.object,
+  bodyAttributes: PropTypes.object,
 };
 
 TimeTable.defaultProps = {
   hoursInterval: DEFAULT_HOURS_INTERVAL,
   timeLabel: "Time",
+  renderDayHeader: DayHeaderPreview,
   renderHour: HourPreview,
   renderEvent: EventPreview,
-  getDayLabel: getDefaultDayLabel,
 };
 
 export default TimeTable;

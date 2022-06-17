@@ -23,11 +23,14 @@ export interface Events {
   [day: string]: Event[];
 }
 
-export interface HourPreviewProps {
+export type DayHeaderPreviewProps = {
+  day: string;
+  rowHeight: number;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export type HourPreviewProps = {
   hour: string;
-  defaultAttributes: React.HTMLAttributes<HTMLDivElement>;
-  classNames?: ClassNames;
-}
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export interface EventPreviewProps {
   event: Event;
@@ -48,9 +51,11 @@ export interface DayColumnPreviewProps {
   day: string;
   index: number;
   rowHeight: number;
-  getDayLabel: (day: string) => string;
+  renderDayHeader: React.FC<DayHeaderPreviewProps>;
   renderEvent: React.FC<EventPreviewProps>;
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
+  headerAttributes?: React.HTMLAttributes<HTMLDivElement>;
+  bodyAttributes?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export interface HoursListProps {
@@ -59,12 +64,13 @@ export interface HoursListProps {
   renderHour: React.FC<HourPreviewProps>;
 }
 
-export interface TimeTableProps {
+export type TimeTableProps = {
   events: Events;
   hoursInterval?: typeof DEFAULT_HOURS_INTERVAL;
   timeLabel?: string;
-  getDayLabel?: (day: string) => string;
+  renderDayHeader?: React.FC<DayHeaderPreviewProps>;
   renderEvent?: React.FC<EventPreviewProps>;
   renderHour?: React.FC<HourPreviewProps>;
-  style: React.CSSProperties;
-}
+  headerAttributes?: React.HTMLAttributes<HTMLDivElement>;
+  bodyAttributes?: React.HTMLAttributes<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>;

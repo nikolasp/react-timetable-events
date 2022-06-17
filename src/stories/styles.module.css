@@ -1,0 +1,16 @@
+.my_custom_hour {
+  background-color: #e29881;
+  outline: 1px dotted grey;
+  text-decoration: dotted;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.my_custom_day_header {
+  background-color: #e29881;
+  font-size: 16px;
+}
+
+.my_custom_day_body {
+  background-color: yellow;
+}

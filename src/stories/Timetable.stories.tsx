@@ -1,8 +1,13 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import format from 'date-fns/format';
-import React from "react";
+import format from "date-fns/format";
 import { TimeTable } from "..";
-import { EventPreviewProps, HourPreviewProps } from "./../types";
+import {
+  DayHeaderPreviewProps,
+  EventPreviewProps,
+  HourPreviewProps,
+} from "./../types";
+// @ts-expect-error Cannot find module './styles.module.css' or its corresponding type declarations.
+import customClassNames from "./styles.module.css";
 
 export default {
   title: "Example/TimeTable",
@@ -15,7 +20,7 @@ export default {
           name: "Custom Event 1",
           type: "error",
           startTime: new Date("2018-02-23T11:30:00"),
-          endTime: new Date("2018-02-23T13:30:00")
+          endTime: new Date("2018-02-23T13:30:00"),
         },
       ],
       tuesday: [
@@ -24,14 +29,14 @@ export default {
           name: "Custom Event 2",
           type: "custom",
           startTime: new Date("2018-02-22T12:30:00"),
-          endTime: new Date("2018-02-22T14:30:00")
+          endTime: new Date("2018-02-22T14:30:00"),
         },
         {
           id: 3,
           name: "Custom Event 3",
           type: "custom",
           startTime: new Date("2018-02-22T16:30:00"),
-          endTime: new Date("2018-02-22T18:45:00")
+          endTime: new Date("2018-02-22T18:45:00"),
         },
       ],
       wednesday: [],
@@ -42,7 +47,7 @@ export default {
 } as ComponentMeta<typeof TimeTable>;
 
 const Template: ComponentStory<typeof TimeTable> = (args) => (
-  <TimeTable {...args} style={{ height: "500px" }} />
+  <TimeTable {...args} />
 );
 
 export const Primary = Template.bind({});
@@ -54,7 +59,7 @@ Primary.args = {
         name: "Custom Event 1",
         type: "error",
         startTime: new Date("2018-02-23T11:30:00"),
-        endTime: new Date("2018-02-23T13:30:00")
+        endTime: new Date("2018-02-23T13:30:00"),
       },
     ],
     tuesday: [
@@ -63,28 +68,45 @@ Primary.args = {
         name: "Custom Event 2",
         type: "custom",
         startTime: new Date("2018-02-22T12:30:00"),
-        endTime: new Date("2018-02-22T14:30:00")
+        endTime: new Date("2018-02-22T14:30:00"),
       },
       {
         id: 3,
         name: "Custom Event 3",
         type: "custom",
         startTime: new Date("2018-02-22T16:30:00"),
-        endTime: new Date("2018-02-22T18:45:00")
+        endTime: new Date("2018-02-22T18:45:00"),
       },
     ],
     wednesday: [],
     thursday: [],
     friday: [],
   },
-  hoursInterval: { from: 7, to: 24 },
-  timeLabel: "Time",
-  getDayLabel: (day: string) => day.slice(0, 3),
+  style: { height: "500px" },
 };
 
-const HourPreview = ({ hour, defaultAttributes }: HourPreviewProps) => {
+const DayHeaderPreview = ({
+  day,
+  rowHeight,
+  ...otherProperties
+}: DayHeaderPreviewProps) => {
   return (
-    <div {...defaultAttributes} key={hour}>
+    <div
+      {...otherProperties}
+      style={{ ...(otherProperties?.style || {}), height: `${rowHeight}px` }}
+    >
+      {day}
+    </div>
+  );
+};
+
+const HourPreview = ({ hour, ...otherProperties }: HourPreviewProps) => {
+  return (
+    <div
+      {...otherProperties}
+      className={`${otherProperties.className} ${customClassNames.my_custom_hour}`}
+      key={hour}
+    >
       {hour}
     </div>
   );
@@ -115,9 +137,17 @@ const EventPreview = ({
 };
 
 export const Secondary = Template.bind({});
-Secondary.storyName = 'Customized: <renderEvent> and <renderHour>'
+Secondary.storyName = "Customized: <renderEvent> and <renderHour>";
 Secondary.args = {
   ...Primary.args,
+  timeLabel: "",
+  renderDayHeader: DayHeaderPreview,
   renderEvent: EventPreview,
   renderHour: HourPreview,
+  headerAttributes: {
+    className: customClassNames.my_custom_day_header,
+  },
+  bodyAttributes: {
+    className: customClassNames.my_custom_day_body,
+  },
 };
