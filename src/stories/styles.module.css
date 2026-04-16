@@ -1,4 +1,4 @@
-.my_custom_hour {
+.myCustomHour {
   background-color: #e29881;
   outline: 1px dotted grey;
   text-decoration: dotted;
@@ -6,11 +6,11 @@
   font-size: 16px;
 }
 
-.my_custom_day_header {
+.myCustomDayHeader {
   background-color: #e29881;
   font-size: 16px;
 }
 
-.my_custom_day_body {
+.myCustomDayBody {
   background-color: yellow;
 }
