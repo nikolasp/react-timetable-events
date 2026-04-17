@@ -1,16 +1,16 @@
 import * as React from "react";
-import { DEFAULT_HOURS_INTERVAL } from "./constants";
+import { DEFAULT_HOURS_INTERVAL, DEFAULT_HOUR_COLUMN_WIDTH } from "./constants";
 
 export type ClassNames = {
-  time_table_wrapper: string;
+  timeTableWrapper: string;
   day: string;
-  day_title: string;
+  dayTitle: string;
   hour: string;
   event: string;
-  event_info: string;
+  eventInfo: string;
 };
 
-export interface Event {
+export interface TimetableEvent {
   id: number | string;
   name: string;
   startTime: Date;
@@ -19,8 +19,8 @@ export interface Event {
   [key: string]: unknown;
 }
 
-export interface Events {
-  [day: string]: Event[];
+export interface TimetableEvents {
+  [day: string]: TimetableEvent[];
 }
 
 export type DayHeaderPreviewProps = {
@@ -33,44 +33,49 @@ export type HourPreviewProps = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export interface EventPreviewProps {
-  event: Event;
+  event: TimetableEvent;
   defaultAttributes: React.HTMLAttributes<HTMLDivElement>;
   classNames: ClassNames;
+  columnOffset?: number;
+  totalColumns?: number;
 }
 
 export interface EventsListProps {
   day: string;
-  events: Events;
-  renderEvent: React.FC<EventPreviewProps>;
+  events: TimetableEvents;
+  renderEvent: React.ComponentType<EventPreviewProps>;
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
   rowHeight: number;
 }
 
 export interface DayColumnPreviewProps {
-  events: Events;
+  events: TimetableEvents;
   day: string;
   index: number;
   rowHeight: number;
-  renderDayHeader: React.FC<DayHeaderPreviewProps>;
-  renderEvent: React.FC<EventPreviewProps>;
+  renderDayHeader: React.ComponentType<DayHeaderPreviewProps>;
+  renderEvent: React.ComponentType<EventPreviewProps>;
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
   headerAttributes?: React.HTMLAttributes<HTMLDivElement>;
   bodyAttributes?: React.HTMLAttributes<HTMLDivElement>;
+  hourColumnWidth: string;
 }
 
 export interface HoursListProps {
   hoursInterval: typeof DEFAULT_HOURS_INTERVAL;
   rowHeight: number;
-  renderHour: React.FC<HourPreviewProps>;
+  renderHour: React.ComponentType<HourPreviewProps>;
 }
 
 export type TimeTableProps = {
-  events: Events;
+  events: TimetableEvents;
   hoursInterval?: typeof DEFAULT_HOURS_INTERVAL;
   timeLabel?: string;
-  renderDayHeader?: React.FC<DayHeaderPreviewProps>;
-  renderEvent?: React.FC<EventPreviewProps>;
-  renderHour?: React.FC<HourPreviewProps>;
+  renderDayHeader?: React.ComponentType<DayHeaderPreviewProps>;
+  renderEvent?: React.ComponentType<EventPreviewProps>;
+  renderHour?: React.ComponentType<HourPreviewProps>;
   headerAttributes?: React.HTMLAttributes<HTMLDivElement>;
   bodyAttributes?: React.HTMLAttributes<HTMLDivElement>;
+  hourColumnWidth?: string;
+  getDayLabel?: (day: string) => string;
 } & React.HTMLAttributes<HTMLDivElement>;

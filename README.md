@@ -4,7 +4,7 @@
 
 ## Description [(Demo)](https://nikolasp.github.io/react-timetable-events/)
 
-> React Timetable Events - flexible timetable component. Ideal for school timetables.
+> React Timetable Events - flexible timetable component with overlapping event support. Ideal for school timetables, scheduling apps, and calendar views.
 
 ## Installation
 
@@ -22,44 +22,44 @@ npm install react-timetable-events
 import * as React from 'react'
 import Timetable from 'react-timetable-events'
 
-export const Example () => <Timetable 
-  events={{
-    monday: [
-      {
-        id: 1,
-        name: "Custom Event 1",
-        type: "custom",
-        startTime: new Date("2018-02-23T11:30:00"),
-        endTime: new Date("2018-02-23T13:30:00"),
-      },
-    ],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-  }}
-  style={{ height: '500px' }}
-/>
+export const Example = () => (
+  <Timetable 
+    events={{
+      monday: [
+        {
+          id: 1,
+          name: "Custom Event 1",
+          type: "custom",
+          startTime: new Date("2018-02-23T11:30:00"),
+          endTime: new Date("2018-02-23T13:30:00"),
+        },
+      ],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+    }}
+    style={{ height: '500px' }}
+  />
+)
 ```
 
 ## Available props
 
-```js
-TimeTable.propTypes = {
-  events: PropTypes.object.isRequired, // events object prepared with days and list of events
-  hoursInterval: PropTypes.shape({
-    from: PropTypes.number.isRequired,
-    to: PropTypes.number.isRequired,
-  }), // displayed hours
-  renderDayHeader: PropTypes.func, // table header preview component
-  renderHour: PropTypes.func, // hour preview component
-  renderEvent: PropTypes.func, // event preview component
-  getDayLabel: PropTypes.func, // change weekday label
-  timeLabel: PropTypes.string, // Time label
-  style: React.CSSProperties, // pass custom wrapper styles like height and width
-  headerAttributes: PropTypes.object, // table header attributes - HTML attrs can be passed
-  bodyAttributes: PropTypes.object, // table body attributes - HTML attrs can be passed
-};
+```ts
+interface TimetableProps {
+  events: TimetableEvents;                          // events object organized by day
+  hoursInterval?: { from: number; to: number };  // displayed hours range (default: 8-17)
+  renderDayHeader?: React.ComponentType<DayHeaderProps>;   // custom day header component
+  renderHour?: React.ComponentType<HourProps>;             // custom hour cell component
+  renderEvent?: React.ComponentType<EventPreviewProps>;    // custom event component
+  getDayLabel?: (day: string) => string;   // customize weekday labels
+  timeLabel?: string;                      // Time column header text
+  style?: React.CSSProperties;             // wrapper styles (height, width, etc.)
+  headerAttributes?: Record<string, string>;  // HTML attributes for header
+  bodyAttributes?: Record<string, string>;    // HTML attributes for body
+  hourColumnWidth?: number;                // width of the hour column in px (default: 70)
+}
 ```
 
 Check [Storybook](./src/stories/Timetable.stories.tsx) for more details about customization.
@@ -67,7 +67,7 @@ Check [Storybook](./src/stories/Timetable.stories.tsx) for more details about cu
 ## Events - the only required prop
 
 ```ts
-export interface Event {
+export interface TimetableEvent {
   id: number | string;
   name: string;
   startTime: Date;
@@ -76,43 +76,50 @@ export interface Event {
   [key: string]: unknown;
 }
 
-export interface Events {
-  [day: string]: Event[];
+export interface TimetableEvents {
+  [day: string]: TimetableEvent[];
 }
 
-const events: Events = {
-  events: {
-    monday: [
-      {
-        id: 1,
-        name: "Custom Event 1",
-        type: "custom",
-        startTime: new Date("2018-02-23T11:30:00"),
-        endTime: new Date("2018-02-23T13:30:00"),
-      },
-    ],
-    tuesday: [
-      {
-        id: 2,
-        name: "Custom Event 2",
-        type: "custom",
-        startTime: new Date("2018-02-22T12:30:00"),
-        endTime: new Date("2018-02-22T14:30:00"),
-      },
-      {
-        id: 3,
-        name: "Custom Event 3",
-        type: "custom",
-        startTime: new Date("2018-02-22T16:30:00"),
-        endTime: new Date("2018-02-22T18:45:00"),
-      },
-    ],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-  },
+const events: TimetableEvents = {
+  monday: [
+    {
+      id: 1,
+      name: "Custom Event 1",
+      type: "custom",
+      startTime: new Date("2018-02-23T11:30:00"),
+      endTime: new Date("2018-02-23T13:30:00"),
+    },
+  ],
+  tuesday: [
+    {
+      id: 2,
+      name: "Custom Event 2",
+      type: "custom",
+      startTime: new Date("2018-02-22T12:30:00"),
+      endTime: new Date("2018-02-22T14:30:00"),
+    },
+    {
+      id: 3,
+      name: "Custom Event 3",
+      type: "custom",
+      startTime: new Date("2018-02-22T16:30:00"),
+      endTime: new Date("2018-02-22T18:45:00"),
+    },
+  ],
+  wednesday: [],
+  thursday: [],
+  friday: [],
 };
 ```
+
+## Features
+
+- **Overlapping event detection** - Events that overlap in time are automatically displayed side-by-side in columns
+- **Hours interval clipping** - Events are clamped to the visible hours range
+- **Accessible markup** - ARIA roles and labels for screen readers
+- **Fully customizable** - Override default rendering for day headers, hours, and events
+- **Responsive** - Automatically adjusts to container size changes
+- **TypeScript support** - Full type definitions included
 
 ## License
 
